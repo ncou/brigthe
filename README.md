@@ -1,42 +1,25 @@
 # Slim Framework 4 Skeleton Application
 
-[![Coverage Status](https://coveralls.io/repos/github/slimphp/Slim-Skeleton/badge.svg?branch=master)](https://coveralls.io/github/slimphp/Slim-Skeleton?branch=master)
+This is my first attempt to play with Slim. I am just in the process to get familiar with the framework so some things I think are a bit clunky
 
-Use this skeleton application to quickly setup and start working on a new Slim Framework 4 application. This application uses the latest Slim 4 with Slim PSR-7 implementation and PHP-DI container implementation. It also uses the Monolog logger.
+## Testing
 
-This skeleton application was built for Composer. This makes setting up a new Slim Framework application quick and easy.
-
-## Install the Application
-
-Run this command from the directory in which you want to install your new Slim Framework application.
-
-```bash
-composer create-project slim/slim-skeleton [my-app-name]
+```
+ php -S localhost:8080 -t public public/index.php
 ```
 
-Replace `[my-app-name]` with the desired directory name for your new application. You'll want to:
+### PHPUnit
+I am not a fan of using the container directly in the test. I am not yet familiar how to test the Actions directly. I think that's my next part.
+In addition, mostly tested the happy path. Because the rest of the classes contain almost no body, I didn't spend much time testing those
 
-* Point your virtual host document root to your new application's `public/` directory.
-* Ensure `logs/` is web writable.
 
-To run the application in development, you can run these commands 
+I haven't spend much time testing the domain yet. I tested just the service.
 
-```bash
-cd [my-app-name]
-composer start
-```
+## Assumptions
 
-Or you can use `docker-compose` to run the app with `docker`, so you can run these commands:
-```bash
-cd [my-app-name]
-docker-compose up -d
-```
-After that, open `http://localhost:8080` in your browser.
+I made a lot of assumption here.
+* Each order will have a different and independent strategy to do the delivery
+* The validation is required prior to process the order. If it fails, the order fails
+* The notification to the email campaign provider is not transactional
+with the processing of the order itself, therefore, could be done asyncronously (even though the implementation is still sync)
 
-Run this command in the application directory to run the test suite
-
-```bash
-composer test
-```
-
-That's it! Now go build something cool.

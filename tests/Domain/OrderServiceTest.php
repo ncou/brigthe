@@ -14,6 +14,7 @@ use App\Domain\Order\Delivery\OrderDeliverStrategyFactory;
 use App\Domain\Order\Delivery\PersonalDeliverer;
 use App\Domain\Order\DeliveryType;
 use App\Domain\Order\Event\OrderDeliveredEvent;
+use App\Domain\Order\Exception\InvalidDeliveryException;
 use App\Domain\Order\OrderService;
 use Bigcommerce\MockInjector\AutoMockingTest;
 use Prophecy\Argument;
@@ -89,6 +90,29 @@ class OrderServiceTest extends AutoMockingTest
             ->willReturn($orderDeliverer->reveal());
         $this->injector->getProphecy(EventDispatcher::class)
             ->dispatch(Argument::type(OrderDeliveredEvent::class))->shouldBeCalled();
+        $subject->deliver($createSimpleOrder);
+    }
+
+    public function testCreateOrderEnterpriseDelivererThrowsException()
+    {
+        $subject = $this->injector->create(OrderService::class);
+
+        $createSimpleOrder = new CreateOrder(
+            new Customer('Elvis Presley', '333 George Street, 2000, Sydney'),
+            'personalDeliveryExpress',
+            'direct',
+            2000
+        );
+        $createSimpleOrder->setEnterprise(new Enterprise(
+            'Bayview Motel',
+            'PtyLtd',
+            'SN123OK',
+            [
+                new Director('Michael Jackskon', '242 Bayview, 2434, Sydney'),
+                new Director('Freddie Mercury', '132 Coast, 2354, Newcastle')
+            ]
+        ));
+        $this->expectException(InvalidDeliveryException::class);
         $subject->deliver($createSimpleOrder);
     }
 }
